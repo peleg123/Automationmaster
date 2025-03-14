@@ -87,14 +87,10 @@
         .checkbox-container input[type="checkbox"] {
             width: auto;
             margin-left: 10px;
-            margin-top: 2px;
+            margin-top: 5px;
         }
         .checkbox-label {
-            font-size: 10px;
-            line-height: 1.2;
-            margin-top: 0;
-            position: relative;
-            top: 2px;
+            font-size: 14px;
         }
         .page {
             display: none;
@@ -221,7 +217,7 @@
             
             <div class="checkbox-container">
                 <input type="checkbox" id="whatsappConsent" name="הסכמה" value="כן" required>
-                <label for="whatsappConsent" class="checkbox-label">
+                <label for="whatsappConsent" class="checkbox-label" style="font-size: 12px; white-space: nowrap;">
                     אני מאשר/ת קבלת ההדרכה החינמית או כל תוכן אחר במדיה הדיגיטלית בדרך כזו או אחרת.
                 </label>
             </div>
@@ -229,14 +225,14 @@
             <div id="loading1" class="loading">שולח...</div>
             
             <!-- Button to go to next page -->
-            <button type="button" id="page1Button" onclick="submitWhatsAppForm()">שלח לי סרטון אוטומציה חינם לווצאפ</button>
+            <button type="button" id="page1Button" onclick="goToSecondPage()">שלח לי סרטון אוטומציה חינם לווצאפ</button>
         </div>
     </div>
     
     <!-- Page 2: Simplified Registration Form -->
     <div id="page2" class="page form-container">
         <button type="button" class="back-button" onclick="goToFirstPage()">
-            &larר; חזרה לשלב הקודם
+            &larr; חזרה לשלב הקודם
         </button>
         
         <h1>טופס רישום לשיחת התאמה להטמעה של אוטומציות AI לעסק שלך</h1>
@@ -293,53 +289,15 @@
         <div class="emoji">🎉</div>
     </div>
     
+    <!-- Hidden iframe for form submission -->
+    <iframe id="hidden-iframe" class="hidden-iframe" name="hidden-iframe"></iframe>
+    
     <script>
-        // Google Apps Script Web App URL
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzy-1y0ptp62v2nIcd_6DSxBrzEcaf7RAq0arCBOxd_pYO7t86nGyguyQoA89HaIkGA/exec";
+        // Your updated Google Apps Script web app URL
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4VHYO-x306qJ0MW-NLtCK53Qde7f97x1DtY5FFr5M2X8TECNa-U8lvBYISp-x5tk2/exec";
         
         // Store the first form data
         let firstFormData = {};
-        
-        // Submission function using XMLHttpRequest
-        function submitToSheet(params, loadingElementId, nextPageId) {
-            // Show loading indicator
-            const loadingElement = document.getElementById(loadingElementId);
-            loadingElement.style.display = 'block';
-            
-            // Create URLSearchParams for proper encoding
-            const formParams = new URLSearchParams();
-            
-            // Add all parameters
-            Object.keys(params).forEach(key => {
-                formParams.append(key, params[key]);
-            });
-            
-            // Add timestamp
-            formParams.append('חותמת זמן', new Date().toISOString());
-            
-            // Use XMLHttpRequest for submission
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', SCRIPT_URL, true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            
-            xhr.onload = function() {
-                loadingElement.style.display = 'none';
-                console.log('Response received:', xhr.responseText);
-                
-                // Move to next page
-                hideAllPages();
-                document.getElementById(nextPageId).classList.add('active');
-                updateProgressIndicator(nextPageId === 'page2' ? 2 : 3);
-            };
-            
-            xhr.onerror = function() {
-                loadingElement.style.display = 'none';
-                console.error('Submission error');
-                alert('שגיאה בשליחה. אנא נסה שוב.');
-            };
-            
-            xhr.send(formParams);
-        }
         
         // Simplified navigation functions
         function goToFirstPage() {
@@ -348,7 +306,7 @@
             updateProgressIndicator(1);
         }
         
-        function submitWhatsAppForm() {
+        function goToSecondPage() {
             // Validate first page
             const name = document.getElementById('whatsappName').value;
             const phone = document.getElementById('whatsappPhone').value;
@@ -358,29 +316,61 @@
                 alert('נא למלא את כל השדות המסומנים ב-* ולאשר את תנאי השימוש');
                 return;
             }
-      // Validate phone number has exactly 10 digits
+            
+            // Validate phone number has exactly 10 digits
             if (!/^\d{10}$/.test(phone)) {
                 alert('מספר הטלפון חייב להכיל בדיוק 10 ספרות');
                 return;
             }
             
+            // Format the timestamp in Israeli format
+            const now = new Date();
+            const timestamp = now.toLocaleString('he-IL', {
+                timeZone: 'Asia/Jerusalem',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
             // Store the data
             firstFormData = {
                 name: name,
                 phone: phone,
-                consent: consent ? 'כן' : 'לא'
+                consent: consent ? 'כן' : 'לא',
+                timestamp: timestamp
             };
             
-            // Prepare submission params
-            const params = {
-                'שם': name,
-                'מספר פלאפון': phone,
-                'הסכמה': consent ? 'כן' : 'לא',
-                'סוג טופס': 'טופס ווצאפ'
-            };
+            // Submit first form data
+            document.getElementById('loading1').style.display = 'block';
+            document.getElementById('page1Button').disabled = true;
             
-            // Submit to sheet
-            submitToSheet(params, 'loading1', 'page2');
+            // Create iframe for submission
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            
+            // Build URL with parameters
+            let url = SCRIPT_URL + '?';
+            url += 'שם=' + encodeURIComponent(name);
+            url += '&מספר%20פלאפון=' + encodeURIComponent(phone);
+            url += '&הסכמה=' + encodeURIComponent(consent ? 'כן' : 'לא');
+            url += '&סוג%20טופס=' + encodeURIComponent('טופס ווצאפ');
+            
+            iframe.src = url;
+            document.body.appendChild(iframe);
+            
+            // Continue to next page after a short delay
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+                document.getElementById('loading1').style.display = 'none';
+                document.getElementById('page1Button').disabled = false;
+                
+                hideAllPages();
+                document.getElementById('page2').classList.add('active');
+                updateProgressIndicator(2);
+            }, 2000);
         }
         
         function submitFinalForm() {
@@ -407,24 +397,42 @@
                 return;
             }
             
-            // Prepare submission params
-            const params = {
-                'שם': firstFormData.name || '',
-                'מספר פלאפון': firstFormData.phone || '',
-                'אימייל': email,
-                'זמן שיחה מועדף': callTime,
-                'סוג עסק': businessType,
-                'סוג טופס': 'טופס הרשמה מלא',
-                'הסכמה': firstFormData.consent || 'כן'
-            };
+            // Show loading indicator
+            document.getElementById('loading2').style.display = 'block';
+            document.getElementById('page2Button').disabled = true;
             
-            // Add other business details if applicable
+            // Create iframe for submission
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            
+            // Build URL with parameters
+            let url = SCRIPT_URL + '?';
+            url += 'שם=' + encodeURIComponent(firstFormData.name || '');
+            url += '&מספר%20פלאפון=' + encodeURIComponent(firstFormData.phone || '');
+            url += '&אימייל=' + encodeURIComponent(email);
+            url += '&זמן%20שיחה%20מועדף=' + encodeURIComponent(callTime);
+            url += '&סוג%20עסק=' + encodeURIComponent(businessType);
+            
             if (businessType === 'אחר' && otherBusiness.value) {
-                params['פירוט עסק אחר'] = otherBusiness.value;
+                url += '&פירוט%20עסק%20אחר=' + encodeURIComponent(otherBusiness.value);
             }
             
-            // Submit to sheet
-            submitToSheet(params, 'loading2', 'page3');
+            url += '&סוג%20טופס=' + encodeURIComponent('טופס הרשמה מלא');
+            url += '&הסכמה=' + encodeURIComponent(firstFormData.consent || 'כן');
+            
+            iframe.src = url;
+            document.body.appendChild(iframe);
+            
+            // Continue to next page after a short delay
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+                document.getElementById('loading2').style.display = 'none';
+                document.getElementById('page2Button').disabled = false;
+                
+                hideAllPages();
+                document.getElementById('page3').classList.add('active');
+                updateProgressIndicator(3);
+            }, 2000);
         }
         
         function hideAllPages() {
