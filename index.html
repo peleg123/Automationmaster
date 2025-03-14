@@ -294,42 +294,12 @@
     
     <script>
         // Your updated Google Apps Script web app URL
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIrJZcOy6Reb1B8RV_4z7qNTQzsYDSqBXqUvo1MLX4icBwxh4mVxBTwsDKzQmc6cdZ/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUCwuyLlPSFh2a7A267nCiRKcA4CtNngoYTY4AmnYAjYD_-9pc3jYL5q4nD12JsiqZ/exec";
         
         // Store the first form data
         let firstFormData = {};
         
-        // Function to submit data via redirect with parameters
-        function submitData(params) {
-            let formUrl = SCRIPT_URL + "?";
-            
-            // Add all parameters to the URL
-            Object.keys(params).forEach((key, index) => {
-                if (index > 0) formUrl += "&";
-                formUrl += encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
-            });
-            
-            // Create and submit a hidden form
-            const form = document.createElement("form");
-            form.method = "POST";
-            form.action = formUrl;
-            form.target = "_blank"; // This will open in a new tab, but it will be redirected back
-            
-            // Add each parameter as a hidden input
-            Object.keys(params).forEach(key => {
-                const hiddenField = document.createElement("input");
-                hiddenField.type = "hidden";
-                hiddenField.name = key;
-                hiddenField.value = params[key];
-                form.appendChild(hiddenField);
-            });
-            
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-            
-            return true;
-        }
+        // No need for submitData function since we're submitting the form directly in submitFinalForm
         
         // Simplified navigation functions
         function goToFirstPage() {
@@ -375,20 +345,17 @@
                 timestamp: timestamp
             };
             
-            // Submit form data
-            document.getElementById('loading1').style.display = 'block';
-            document.getElementById('page1Button').disabled = true;
-            
-            // Build parameters
-            const params = {
-                'שם': name,
-                'מספר פלאפון': phone,
-                'הסכמה': consent ? 'כן' : 'לא',
-                'סוג טופס': 'טופס ווצאפ'
+            // Store the data without submitting in first step
+            firstFormData = {
+                name: name,
+                phone: phone,
+                consent: consent ? 'כן' : 'לא',
+                timestamp: timestamp
             };
             
-            // Submit data
-            submitData(params);
+            // Continue to next page without submitting data
+            document.getElementById('loading1').style.display = 'block';
+            document.getElementById('page1Button').disabled = true;
             
             // Continue to next page after a short delay
             setTimeout(() => {
