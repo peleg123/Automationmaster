@@ -177,13 +177,6 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        .hidden-iframe {
-            display: none;
-            width: 0;
-            height: 0;
-            border: 0;
-            position: absolute;
-        }
     </style>
 </head>
 <body>
@@ -201,85 +194,95 @@
         </div>
     </div>
     
-    <!-- Page 1: Phone and Name for WhatsApp Video -->
-    <div id="page1" class="page active form-container">
-        <h1>קבל אוטומציה חינם לעסק לווצאפ</h1>
-        <div id="whatsappForm">
-            <div class="form-group">
-                <label for="whatsappName">שם <span class="required">*</span></label>
-                <input type="text" id="whatsappName" name="שם" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="whatsappPhone">מספר פלאפון <span class="required">*</span></label>
-                <input type="tel" id="whatsappPhone" name="מספר פלאפון" pattern="[0-9]{10}" maxlength="10" required>
-            </div>
-            
-            <div class="checkbox-container">
-                <input type="checkbox" id="whatsappConsent" name="הסכמה" value="כן" required>
-                <label for="whatsappConsent" class="checkbox-label" style="font-size: 12px; white-space: nowrap;">
-                    אני מאשר/ת קבלת ההדרכה החינמית או כל תוכן אחר במדיה הדיגיטלית בדרך כזו או אחרת.
-                </label>
-            </div>
-            
-            <div id="loading1" class="loading">שולח...</div>
-            
-            <!-- Button to go to next page -->
-            <button type="button" id="page1Button" onclick="goToSecondPage()">שלח לי סרטון אוטומציה חינם לווצאפ</button>
-        </div>
-    </div>
-    
-    <!-- Page 2: Simplified Registration Form -->
-    <div id="page2" class="page form-container">
-        <button type="button" class="back-button" onclick="goToFirstPage()">
-            &larr; חזרה לשלב הקודם
-        </button>
+    <!-- MAIN FORM: we'll use a single form that spans both pages -->
+    <form id="mainForm" method="POST" action="https://script.google.com/macros/s/AKfycbx-eaz1kOIRzLL3oy5NaMvQZYHhoNfkcL-jL_ZaixrJT0Wgl-TSnENJtom0-XMTczsQ/exec" target="_blank">
+        <!-- Hidden fields that will be populated as the user progresses -->
+        <input type="hidden" id="hiddenName" name="שם">
+        <input type="hidden" id="hiddenPhone" name="מספר פלאפון">
+        <input type="hidden" id="hiddenConsent" name="הסכמה">
+        <input type="hidden" id="hiddenFormType" name="סוג טופס" value="טופס הרשמה מלא">
+        <input type="hidden" id="hiddenTimestamp" name="תאריך הגשה">
         
-        <h1>טופס רישום לשיחת התאמה להטמעה של אוטומציות AI לעסק שלך</h1>
-        <div id="applicationForm">
-            <div class="form-group">
-                <label for="email">כתובת אימייל <span class="required">*</span></label>
-                <input type="email" id="email" name="אימייל" required>
+        <!-- Page 1: Phone and Name for WhatsApp Video -->
+        <div id="page1" class="page active form-container">
+            <h1>קבל אוטומציה חינם לעסק לווצאפ</h1>
+            <div id="whatsappForm">
+                <div class="form-group">
+                    <label for="whatsappName">שם <span class="required">*</span></label>
+                    <input type="text" id="whatsappName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="whatsappPhone">מספר פלאפון <span class="required">*</span></label>
+                    <input type="tel" id="whatsappPhone" pattern="[0-9]{10}" maxlength="10" required>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="whatsappConsent" value="כן" required>
+                    <label for="whatsappConsent" class="checkbox-label" style="font-size: 12px; white-space: nowrap;">
+                        אני מאשר/ת קבלת ההדרכה החינמית או כל תוכן אחר במדיה הדיגיטלית בדרך כזו או אחרת.
+                    </label>
+                </div>
+                
+                <div id="loading1" class="loading">שולח...</div>
+                
+                <!-- Button to go to next page -->
+                <button type="button" id="page1Button" onclick="goToSecondPage()">שלח לי סרטון אוטומציה חינם לווצאפ</button>
             </div>
-            
-            <div class="form-group">
-                <label for="callTime">מהו הזמן המועדף לשיחה? <span class="required">*</span></label>
-                <select id="callTime" name="זמן שיחה מועדף" required>
-                    <option value="" disabled selected>בחר את הזמן המועדף</option>
-                    <option value="בוקר">בוקר (9:00-13:00)</option>
-                    <option value="אחר הצהריים">אחר הצהריים (13:00-17:00)</option>
-                    <option value="ערב">ערב (17:00-19:00)</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="businessType">איזה סוג עסק יש לך? <span class="required">*</span></label>
-                <select id="businessType" name="סוג עסק" required>
-                    <option value="" disabled selected>בחר את סוג העסק שלך</option>
-                    <option value="קמעונאות">קמעונאות</option>
-                    <option value="מבוסס שירות">מבוסס שירות</option>
-                    <option value="ייצור">ייצור</option>
-                    <option value="טכנולוגיה/תוכנה">טכנולוגיה/תוכנה</option>
-                    <option value="מזון ומשקאות">מזון ומשקאות</option>
-                    <option value="בריאות ורווחה">בריאות ורווחה</option>
-                    <option value="יצירתיות ועיצוב">יצירתיות ועיצוב</option>
-                    <option value="מסחר אלקטרוני">מסחר אלקטרוני</option>
-                    <option value="עסק מקוון">עסק מקוון</option>
-                    <option value="אחר">אחר</option>
-                </select>
-            </div>
-            
-            <div class="form-group" id="otherBusinessContainer" style="display: none;">
-                <label for="otherBusiness">נא לפרט את סוג העסק שלך <span class="required">*</span></label>
-                <input type="text" id="otherBusiness" name="פירוט עסק אחר">
-            </div>
-            
-            <div id="loading2" class="loading">שולח...</div>
-            
-            <!-- Submit button for page 2 form -->
-            <button type="button" id="page2Button" onclick="submitFinalForm()">שלח</button>
         </div>
-    </div>
+        
+        <!-- Page 2: Simplified Registration Form -->
+        <div id="page2" class="page form-container">
+            <button type="button" class="back-button" onclick="goToFirstPage()">
+                &larr; חזרה לשלב הקודם
+            </button>
+            
+            <h1>טופס רישום לשיחת התאמה להטמעה של אוטומציות AI לעסק שלך</h1>
+            <div id="applicationForm">
+                <div class="form-group">
+                    <label for="email">כתובת אימייל <span class="required">*</span></label>
+                    <input type="email" id="email" name="אימייל" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="callTime">מהו הזמן המועדף לשיחה? <span class="required">*</span></label>
+                    <select id="callTime" name="זמן שיחה מועדף" required>
+                        <option value="" disabled selected>בחר את הזמן המועדף</option>
+                        <option value="בוקר">בוקר (9:00-13:00)</option>
+                        <option value="אחר הצהריים">אחר הצהריים (13:00-17:00)</option>
+                        <option value="ערב">ערב (17:00-19:00)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="businessType">איזה סוג עסק יש לך? <span class="required">*</span></label>
+                    <select id="businessType" name="סוג עסק" required>
+                        <option value="" disabled selected>בחר את סוג העסק שלך</option>
+                        <option value="קמעונאות">קמעונאות</option>
+                        <option value="מבוסס שירות">מבוסס שירות</option>
+                        <option value="ייצור">ייצור</option>
+                        <option value="טכנולוגיה/תוכנה">טכנולוגיה/תוכנה</option>
+                        <option value="מזון ומשקאות">מזון ומשקאות</option>
+                        <option value="בריאות ורווחה">בריאות ורווחה</option>
+                        <option value="יצירתיות ועיצוב">יצירתיות ועיצוב</option>
+                        <option value="מסחר אלקטרוני">מסחר אלקטרוני</option>
+                        <option value="עסק מקוון">עסק מקוון</option>
+                        <option value="אחר">אחר</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="otherBusinessContainer" style="display: none;">
+                    <label for="otherBusiness">נא לפרט את סוג העסק שלך <span class="required">*</span></label>
+                    <input type="text" id="otherBusiness" name="פירוט עסק אחר">
+                </div>
+                
+                <div id="loading2" class="loading">שולח...</div>
+                
+                <!-- Submit button for page 2 form -->
+                <button type="submit" id="page2Button">שלח</button>
+            </div>
+        </div>
+    </form>
     
     <!-- Page 3: Final confirmation -->
     <div id="page3" class="page form-container final-page">
@@ -289,17 +292,9 @@
         <div class="emoji">🎉</div>
     </div>
     
-    <!-- Hidden iframe for form submission -->
-    <iframe id="hidden-iframe" class="hidden-iframe" name="hidden-iframe"></iframe>
-    
     <script>
         // Your updated Google Apps Script web app URL
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-eaz1kOIRzLL3oy5NaMvQZYHhoNfkcL-jL_ZaixrJT0Wgl-TSnENJtom0-XMTczsQ/exec";
-        
-        // Store the first form data
-        let firstFormData = {};
-        
-        // No need for submitData function since we're submitting the form directly in submitFinalForm
         
         // Simplified navigation functions
         function goToFirstPage() {
@@ -337,41 +332,17 @@
                 second: '2-digit'
             });
             
-            // Store the data
-            firstFormData = {
-                name: name,
-                phone: phone,
-                consent: consent ? 'כן' : 'לא',
-                timestamp: timestamp
-            };
+            // Store data in hidden fields
+            document.getElementById('hiddenName').value = name;
+            document.getElementById('hiddenPhone').value = phone;
+            document.getElementById('hiddenConsent').value = consent ? 'כן' : 'לא';
+            document.getElementById('hiddenTimestamp').value = timestamp;
             
-            // Continue to next page without submitting data
+            // Show loading indicator
             document.getElementById('loading1').style.display = 'block';
             document.getElementById('page1Button').disabled = true;
             
-            // Format the timestamp in Israeli format
-            const now = new Date();
-            const timestamp = now.toLocaleString('he-IL', {
-                timeZone: 'Asia/Jerusalem',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            
-            // Store the data without submitting in first step
-            firstFormData = {
-                name: name,
-                phone: phone,
-                consent: consent ? 'כן' : 'לא',
-                timestamp: timestamp
-            };
-            
-            console.log("First page data stored:", firstFormData);
-            
-            // Continue to next page after a short delay
+            // Move to page 2 after a short delay
             setTimeout(() => {
                 document.getElementById('loading1').style.display = 'none';
                 document.getElementById('page1Button').disabled = false;
@@ -379,10 +350,11 @@
                 hideAllPages();
                 document.getElementById('page2').classList.add('active');
                 updateProgressIndicator(2);
-            }, 2000);
+            }, 1000);
         }
         
-        function submitFinalForm() {
+        // Add a listener to the main form to handle submission
+        document.getElementById('mainForm').addEventListener('submit', function(e) {
             // Validate second page
             const email = document.getElementById('email').value;
             const callTime = document.getElementById('callTime').value;
@@ -390,6 +362,7 @@
             const otherBusiness = document.getElementById('otherBusiness');
             
             if (!email || !callTime || !businessType) {
+                e.preventDefault();
                 alert('נא למלא את כל השדות המסומנים ב-*');
                 return;
             }
@@ -397,11 +370,13 @@
             // Validate email format
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailPattern.test(email)) {
+                e.preventDefault();
                 alert('נא להזין כתובת אימייל תקינה');
                 return;
             }
             
             if (businessType === 'אחר' && !otherBusiness.value) {
+                e.preventDefault();
                 alert('נא לפרט את סוג העסק שלך');
                 return;
             }
@@ -410,40 +385,15 @@
             document.getElementById('loading2').style.display = 'block';
             document.getElementById('page2Button').disabled = true;
             
-            // Create form data object
-            const formData = new URLSearchParams({
-                'שם': firstFormData.name || '',
-                'מספר פלאפון': firstFormData.phone || '',
-                'אימייל': email,
-                'זמן שיחה מועדף': callTime,
-                'סוג עסק': businessType,
-                'סוג טופס': 'טופס הרשמה מלא',
-                'הסכמה': firstFormData.consent || 'כן'
-            });
+            // Form will submit normally
             
-            if (businessType === 'אחר' && otherBusiness.value) {
-                formData.append('פירוט עסק אחר', otherBusiness.value);
-            }
-            
-            // Send data using fetch with POST method
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formData
-            });
-            
-            // Continue to next page after a short delay
+            // Show the thank you page after a delay
             setTimeout(() => {
-                document.getElementById('loading2').style.display = 'none';
-                document.getElementById('page2Button').disabled = false;
-                
                 hideAllPages();
                 document.getElementById('page3').classList.add('active');
                 updateProgressIndicator(3);
-            }, 2000);
-        }
+            }, 1000);
+        });
         
         function hideAllPages() {
             document.querySelectorAll('.page').forEach(page => {
