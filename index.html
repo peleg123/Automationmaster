@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>טופס רישום לאוטומציות AI לעסק</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Heebo', Arial, sans-serif;
+            line-height: 1.6;
+            color: #37474F;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ECEFF1;
+            text-align: right;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #006064;
+        }
+        .headline {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #006064;
+            font-size: 1.4em;
+            font-weight: bold;
+            background-color: #B2DFDB;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #006064;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #B2DFDB;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+            text-align: right;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #00897B;
+            box-shadow: 0 0 0 3px rgba(0, 137, 123, 0.2);
+        }
+        button {
+            background-color: #00897B;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #006064;
+        }
+        .form-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .required {
+            color: #00897B;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .checkbox-container input[type="checkbox"] {
+            width: auto;
+            margin-left: 10px;
+            margin-top: 5px;
+        }
+        .checkbox-label {
+            font-size: 14px;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .small-text {
+            font-size: 12px;
+            color: #696969;
+        }
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .steps {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .step.active {
+            background-color: #00897B;
+            color: white;
+        }
+        .step.inactive {
+            background-color: #B2DFDB;
+            color: #006064;
+        }
+        .step-connector {
+            height: 2px;
+            width: 30px;
+            background-color: #B2DFDB;
+        }
+        .back-button {
+            background-color: #37474F;
+            margin-bottom: 20px;
+            width: auto !important;
+            font-size: 14px;
+            padding: 8px 15px;
+        }
+        .final-page {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .final-page h2 {
+            color: #006064;
+            margin-bottom: 20px;
+        }
+        .final-page p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        .emoji {
+            font-size: 36px;
+            margin: 20px 0;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .loading::after {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #00897B;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .hidden-iframe {
+            display: none;
+            width: 0;
+            height: 0;
+            border: 0;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div class="headline">
+        מלא את הטופס וחסוך לעצמך שעות של זמן מבוזבז בעזרתנו!
+    </div>
+    
+    <div class="progress-indicator">
+        <div class="steps">
+            <div id="step1" class="step active">1</div>
+            <div class="step-connector"></div>
+            <div id="step2" class="step inactive">2</div>
+            <div class="step-connector"></div>
+            <div id="step3" class="step inactive">3</div>
+        </div>
+    </div>
+    
+    <!-- Page 1: Phone and Name for WhatsApp Video -->
+    <div id="page1" class="page active form-container">
+        <h1>קבל אוטומציה חינם לעסק לווצאפ</h1>
+        <div id="whatsappForm">
+            <div class="form-group">
+                <label for="whatsappName">שם <span class="required">*</span></label>
+                <input type="text" id="whatsappName" name="שם" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="whatsappPhone">מספר פלאפון <span class="required">*</span></label>
+                <input type="tel" id="whatsappPhone" name="מספר פלאפון" pattern="[0-9]{10}" maxlength="10" required>
+            </div>
+            
+            <div class="checkbox-container">
+                <input type="checkbox" id="whatsappConsent" name="הסכמה" value="כן" required>
+                <label for="whatsappConsent" class="checkbox-label" style="font-size: 12px; white-space: nowrap;">
+                    אני מאשר/ת קבלת ההדרכה החינמית או כל תוכן אחר במדיה הדיגיטלית בדרך כזו או אחרת.
+                </label>
+            </div>
+            
+            <div id="loading1" class="loading">שולח...</div>
+            
+            <!-- Button to go to next page -->
+            <button type="button" id="page1Button" onclick="goToSecondPage()">שלח לי סרטון אוטומציה חינם לווצאפ</button>
+        </div>
+    </div>
+    
+    <!-- Page 2: Simplified Registration Form -->
+    <div id="page2" class="page form-container">
+        <button type="button" class="back-button" onclick="goToFirstPage()">
+            &larr; חזרה לשלב הקודם
+        </button>
+        
+        <h1>טופס רישום לשיחת התאמה להטמעה של אוטומציות AI לעסק שלך</h1>
+        <div id="applicationForm">
+            <div class="form-group">
+                <label for="email">כתובת אימייל <span class="required">*</span></label>
+                <input type="email" id="email" name="אימייל" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="callTime">מהו הזמן המועדף לשיחה? <span class="required">*</span></label>
+                <select id="callTime" name="זמן שיחה מועדף" required>
+                    <option value="" disabled selected>בחר את הזמן המועדף</option>
+                    <option value="בוקר">בוקר (9:00-13:00)</option>
+                    <option value="אחר הצהריים">אחר הצהריים (13:00-17:00)</option>
+                    <option value="ערב">ערב (17:00-19:00)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="businessType">איזה סוג עסק יש לך? <span class="required">*</span></label>
+                <select id="businessType" name="סוג עסק" required>
+                    <option value="" disabled selected>בחר את סוג העסק שלך</option>
+                    <option value="קמעונאות">קמעונאות</option>
+                    <option value="מבוסס שירות">מבוסס שירות</option>
+                    <option value="ייצור">ייצור</option>
+                    <option value="טכנולוגיה/תוכנה">טכנולוגיה/תוכנה</option>
+                    <option value="מזון ומשקאות">מזון ומשקאות</option>
+                    <option value="בריאות ורווחה">בריאות ורווחה</option>
+                    <option value="יצירתיות ועיצוב">יצירתיות ועיצוב</option>
+                    <option value="מסחר אלקטרוני">מסחר אלקטרוני</option>
+                    <option value="עסק מקוון">עסק מקוון</option>
+                    <option value="אחר">אחר</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="otherBusinessContainer" style="display: none;">
+                <label for="otherBusiness">נא לפרט את סוג העסק שלך <span class="required">*</span></label>
+                <input type="text" id="otherBusiness" name="פירוט עסק אחר">
+            </div>
+            
+            <div id="loading2" class="loading">שולח...</div>
+            
+            <!-- Submit button for page 2 form -->
+            <button type="button" id="page2Button" onclick="submitFinalForm()">שלח</button>
+        </div>
+    </div>
+    
+    <!-- Page 3: Final confirmation -->
+    <div id="page3" class="page form-container final-page">
+        <div class="emoji">✨</div>
+        <h2>מעולה!</h2>
+        <p>ההדרכה נשלחה אליך ובקרוב נעלה לשיחה, מתרגשים :)</p>
+        <div class="emoji">🎉</div>
+    </div>
+    
+    <!-- Hidden iframe for form submission -->
+    <iframe id="hidden-iframe" class="hidden-iframe" name="hidden-iframe"></iframe>
+    
+    <script>
+        // Your updated Google Apps Script web app URL
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQrtsBOJu0PHsnafurgmr8ZiXLHwO7T4h5f6mjGGd7EML3oEpf4jMgJGMdAiQvTIQu/exec";
+        
+        // Store the first form data
+        let firstFormData = {};
+        
+        // Simplified navigation functions
+        function goToFirstPage() {
+            hideAllPages();
+            document.getElementById('page1').classList.add('active');
+            updateProgressIndicator(1);
+        }
+        
+        function goToSecondPage() {
+            // Validate first page
+            const name = document.getElementById('whatsappName').value;
+            const phone = document.getElementById('whatsappPhone').value;
+            const consent = document.getElementById('whatsappConsent').checked;
+            
+            if (!name || !phone || !consent) {
+                alert('נא למלא את כל השדות המסומנים ב-* ולאשר את תנאי השימוש');
+                return;
+            }
+            
+            // Validate phone number has exactly 10 digits
+            if (!/^\d{10}$/.test(phone)) {
+                alert('מספר הטלפון חייב להכיל בדיוק 10 ספרות');
+                return;
+            }
+            
+            // Format the timestamp in Israeli format
+            const now = new Date();
+            const timestamp = now.toLocaleString('he-IL', {
+                timeZone: 'Asia/Jerusalem',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            // Store the data
+            firstFormData = {
+                name: name,
+                phone: phone,
+                consent: consent ? 'כן' : 'לא',
+                timestamp: timestamp
+            };
+            
+            // Submit first form data
+            document.getElementById('loading1').style.display = 'block';
+            document.getElementById('page1Button').disabled = true;
+            
+            // Create iframe for submission
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            
+            // Build URL with parameters
+            let url = SCRIPT_URL + '?';
+            url += 'שם=' + encodeURIComponent(name);
+            url += '&מספר%20פלאפון=' + encodeURIComponent(phone);
+            url += '&הסכמה=' + encodeURIComponent(consent ? 'כן' : 'לא');
+            url += '&סוג%20טופס=' + encodeURIComponent('טופס ווצאפ');
+            
+            iframe.src = url;
+            document.body.appendChild(iframe);
+            
+            // Continue to next page after a short delay
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+                document.getElementById('loading1').style.display = 'none';
+                document.getElementById('page1Button').disabled = false;
+                
+                hideAllPages();
+                document.getElementById('page2').classList.add('active');
+                updateProgressIndicator(2);
+            }, 2000);
+        }
+        
+        function submitFinalForm() {
+            // Validate second page
+            const email = document.getElementById('email').value;
+            const callTime = document.getElementById('callTime').value;
+            const businessType = document.getElementById('businessType').value;
+            const otherBusiness = document.getElementById('otherBusiness');
+            
+            if (!email || !callTime || !businessType) {
+                alert('נא למלא את כל השדות המסומנים ב-*');
+                return;
+            }
+            
+            // Validate email format
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                alert('נא להזין כתובת אימייל תקינה');
+                return;
+            }
+            
+            if (businessType === 'אחר' && !otherBusiness.value) {
+                alert('נא לפרט את סוג העסק שלך');
+                return;
+            }
+            
+            // Show loading indicator
+            document.getElementById('loading2').style.display = 'block';
+            document.getElementById('page2Button').disabled = true;
+            
+            // Create iframe for submission
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            
+            // Build URL with parameters
+            let url = SCRIPT_URL + '?';
+            url += 'שם=' + encodeURIComponent(firstFormData.name || '');
+            url += '&מספר%20פלאפון=' + encodeURIComponent(firstFormData.phone || '');
+            url += '&אימייל=' + encodeURIComponent(email);
+            url += '&זמן%20שיחה%20מועדף=' + encodeURIComponent(callTime);
+            url += '&סוג%20עסק=' + encodeURIComponent(businessType);
+            
+            if (businessType === 'אחר' && otherBusiness.value) {
+                url += '&פירוט%20עסק%20אחר=' + encodeURIComponent(otherBusiness.value);
+            }
+            
+            url += '&סוג%20טופס=' + encodeURIComponent('טופס הרשמה מלא');
+            url += '&הסכמה=' + encodeURIComponent(firstFormData.consent || 'כן');
+            
+            iframe.src = url;
+            document.body.appendChild(iframe);
+            
+            // Continue to next page after a short delay
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+                document.getElementById('loading2').style.display = 'none';
+                document.getElementById('page2Button').disabled = false;
+                
+                hideAllPages();
+                document.getElementById('page3').classList.add('active');
+                updateProgressIndicator(3);
+            }, 2000);
+        }
+        
+        function hideAllPages() {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+        }
+        
+        function updateProgressIndicator(step) {
+            document.querySelectorAll('.step').forEach((stepElement, index) => {
+                if (index + 1 === step) {
+                    stepElement.className = 'step active';
+                } else {
+                    stepElement.className = 'step inactive';
+                }
+            });
+        }
+        
+        // Show "Other" field if "Other" is selected
+        document.getElementById('businessType').addEventListener('change', function() {
+            const otherContainer = document.getElementById('otherBusinessContainer');
+            const otherBusinessInput = document.getElementById('otherBusiness');
+            
+            if (this.value === 'אחר') {
+                otherContainer.style.display = 'block';
+                otherBusinessInput.setAttribute('required', '');
+            } else {
+                otherContainer.style.display = 'none';
+                otherBusinessInput.removeAttribute('required');
+            }
+        });
+    </script>
+</body>
+</html>
