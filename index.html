@@ -294,10 +294,42 @@
     
     <script>
         // Your updated Google Apps Script web app URL
-        const SCRIPT_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjMLRCKxtHAmIFAcBan0M6N7u86pl5A4MqYxl3hjyj6Oz3RlwDYrSH66TkvQ_itrhQIV-668LcVdtYpvU013GRggGJjDV44w_ZfIy6UYYY57LGmLdvbn7fSnBQvTHedympKJH7Dh2XOk2317Q7r2mQZ_3-Qj1XlqgzWX4bppBey7KKfpuz0lNhGtDDTTflqaI2eM7neiEL_ciO9lfBf9UwJkx0IBKvVJe95QbCFsQCE2hP-hHkUE5dBfhLB3F25ay7ypCOq9iQqQfO1bKcySWrEnqX9UQ&lib=MOOVDyGp0HMFniO-zlucTjB46r7MRh-wb";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTso6B9CVVJB-tuauDpKUyJ74QjMuRCP3_84cZ2xnhr4HjwfszBaqv9F5RlZmP0NGf/exec";
         
         // Store the first form data
         let firstFormData = {};
+        
+        // Function to submit data via redirect with parameters
+        function submitData(params) {
+            let formUrl = SCRIPT_URL + "?";
+            
+            // Add all parameters to the URL
+            Object.keys(params).forEach((key, index) => {
+                if (index > 0) formUrl += "&";
+                formUrl += encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
+            });
+            
+            // Create and submit a hidden form
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = formUrl;
+            form.target = "_blank"; // This will open in a new tab, but it will be redirected back
+            
+            // Add each parameter as a hidden input
+            Object.keys(params).forEach(key => {
+                const hiddenField = document.createElement("input");
+                hiddenField.type = "hidden";
+                hiddenField.name = key;
+                hiddenField.value = params[key];
+                form.appendChild(hiddenField);
+            });
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+            
+            return true;
+        }
         
         // Simplified navigation functions
         function goToFirstPage() {
@@ -343,23 +375,20 @@
                 timestamp: timestamp
             };
             
-            // Submit first form data
+            // Submit form data
             document.getElementById('loading1').style.display = 'block';
             document.getElementById('page1Button').disabled = true;
             
-            // Send data using fetch with POST method
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    'שם': name,
-                    'מספר פלאפון': phone,
-                    'הסכמה': consent ? 'כן' : 'לא',
-                    'סוג טופס': 'טופס ווצאפ'
-                })
-            });
+            // Build parameters
+            const params = {
+                'שם': name,
+                'מספר פלאפון': phone,
+                'הסכמה': consent ? 'כן' : 'לא',
+                'סוג טופס': 'טופס ווצאפ'
+            };
+            
+            // Submit data
+            submitData(params);
             
             // Continue to next page after a short delay
             setTimeout(() => {
