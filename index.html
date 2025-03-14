@@ -347,23 +347,22 @@
             document.getElementById('loading1').style.display = 'block';
             document.getElementById('page1Button').disabled = true;
             
-            // Create iframe for submission
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            
-            // Build URL with parameters
-            let url = SCRIPT_URL + '?';
-            url += 'שם=' + encodeURIComponent(name);
-            url += '&מספר%20פלאפון=' + encodeURIComponent(phone);
-            url += '&הסכמה=' + encodeURIComponent(consent ? 'כן' : 'לא');
-            url += '&סוג%20טופס=' + encodeURIComponent('טופס ווצאפ');
-            
-            iframe.src = url;
-            document.body.appendChild(iframe);
+            // Send data using fetch with POST method
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'שם': name,
+                    'מספר פלאפון': phone,
+                    'הסכמה': consent ? 'כן' : 'לא',
+                    'סוג טופס': 'טופס ווצאפ'
+                })
+            });
             
             // Continue to next page after a short delay
             setTimeout(() => {
-                document.body.removeChild(iframe);
                 document.getElementById('loading1').style.display = 'none';
                 document.getElementById('page1Button').disabled = false;
                 
@@ -401,31 +400,32 @@
             document.getElementById('loading2').style.display = 'block';
             document.getElementById('page2Button').disabled = true;
             
-            // Create iframe for submission
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            
-            // Build URL with parameters
-            let url = SCRIPT_URL + '?';
-            url += 'שם=' + encodeURIComponent(firstFormData.name || '');
-            url += '&מספר%20פלאפון=' + encodeURIComponent(firstFormData.phone || '');
-            url += '&אימייל=' + encodeURIComponent(email);
-            url += '&זמן%20שיחה%20מועדף=' + encodeURIComponent(callTime);
-            url += '&סוג%20עסק=' + encodeURIComponent(businessType);
+            // Create form data object
+            const formData = new URLSearchParams({
+                'שם': firstFormData.name || '',
+                'מספר פלאפון': firstFormData.phone || '',
+                'אימייל': email,
+                'זמן שיחה מועדף': callTime,
+                'סוג עסק': businessType,
+                'סוג טופס': 'טופס הרשמה מלא',
+                'הסכמה': firstFormData.consent || 'כן'
+            });
             
             if (businessType === 'אחר' && otherBusiness.value) {
-                url += '&פירוט%20עסק%20אחר=' + encodeURIComponent(otherBusiness.value);
+                formData.append('פירוט עסק אחר', otherBusiness.value);
             }
             
-            url += '&סוג%20טופס=' + encodeURIComponent('טופס הרשמה מלא');
-            url += '&הסכמה=' + encodeURIComponent(firstFormData.consent || 'כן');
-            
-            iframe.src = url;
-            document.body.appendChild(iframe);
+            // Send data using fetch with POST method
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData
+            });
             
             // Continue to next page after a short delay
             setTimeout(() => {
-                document.body.removeChild(iframe);
                 document.getElementById('loading2').style.display = 'none';
                 document.getElementById('page2Button').disabled = false;
                 
