@@ -294,11 +294,35 @@
     </div>
     
     <script>
-        // Your updated Google Apps Script web app URL
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQrtsBOJu0PHsnafurgmr8ZiXLHwO7T4h5f6mjGGd7EML3oEpf4jMgJGMdAiQvTIQu/exec";
+        // Google Apps Script Web App URL
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzy-1y0ptp62v2nIcd_6DSxBrzEcaf7RAq0arCBOxd_pYO7t86nGyguyQoA89HaIkGA/exec";
         
         // Store the first form data
         let firstFormData = {};
+        
+        // Submission function with fetch
+        function submitWithFetch(params) {
+            // Create FormData
+            const formData = new FormData();
+            Object.keys(params).forEach(key => {
+                formData.append(key, params[key]);
+            });
+
+            // Use fetch with mode: 'no-cors'
+            return fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'  // Important for cross-origin requests
+            })
+            .then(response => {
+                console.log('Form submission attempted');
+                return response;
+            })
+            .catch(error => {
+                console.error('Submission error:', error);
+                alert('שגיאה בשליחת הטופס. אנא נסה שוב.');
+            });
+        }
         
         // Simplified navigation functions
         function goToFirstPage() {
@@ -324,147 +348,20 @@
                 return;
             }
             
-            // Format the timestamp in Israeli format
-            const now = new Date();
-            const timestamp = now.toLocaleString('he-IL', {
-                timeZone: 'Asia/Jerusalem',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            
             // Store the data
             firstFormData = {
                 name: name,
                 phone: phone,
-                consent: consent ? 'כן' : 'לא',
-                timestamp: timestamp
+                consent: consent ? 'כן' : 'לא'
             };
             
-            // Submit first form data
-            document.getElementById('loading1').style.display = 'block';
-            document.getElementById('page1Button').disabled = true;
-            
-            // Create iframe for submission
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            
-            // Build URL with parameters
-            let url = SCRIPT_URL + '?';
-            url += 'שם=' + encodeURIComponent(name);
-            url += '&מספר%20פלאפון=' + encodeURIComponent(phone);
-            url += '&הסכמה=' + encodeURIComponent(consent ? 'כן' : 'לא');
-            url += '&סוג%20טופס=' + encodeURIComponent('טופס ווצאפ');
-            
-            iframe.src = url;
-            document.body.appendChild(iframe);
-            
-            // Continue to next page after a short delay
-            setTimeout(() => {
-                document.body.removeChild(iframe);
-                document.getElementById('loading1').style.display = 'none';
-                document.getElementById('page1Button').disabled = false;
-                
-                hideAllPages();
-                document.getElementById('page2').classList.add('active');
-                updateProgressIndicator(2);
-            }, 2000);
-        }
-        
-        function submitFinalForm() {
-            // Validate second page
-            const email = document.getElementById('email').value;
-            const callTime = document.getElementById('callTime').value;
-            const businessType = document.getElementById('businessType').value;
-            const otherBusiness = document.getElementById('otherBusiness');
-            
-            if (!email || !callTime || !businessType) {
-                alert('נא למלא את כל השדות המסומנים ב-*');
-                return;
-            }
-            
-            // Validate email format
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailPattern.test(email)) {
-                alert('נא להזין כתובת אימייל תקינה');
-                return;
-            }
-            
-            if (businessType === 'אחר' && !otherBusiness.value) {
-                alert('נא לפרט את סוג העסק שלך');
-                return;
-            }
+            // Prepare submission params
+            const params = {
+                'שם': name,
+                'מספר פלאפון': phone,
+                'הסכמה': consent ? 'כן' : 'לא',
+                'סוג טופס': 'טופס ווצאפ'
+            };
             
             // Show loading indicator
-            document.getElementById('loading2').style.display = 'block';
-            document.getElementById('page2Button').disabled = true;
-            
-            // Create iframe for submission
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            
-            // Build URL with parameters
-            let url = SCRIPT_URL + '?';
-            url += 'שם=' + encodeURIComponent(firstFormData.name || '');
-            url += '&מספר%20פלאפון=' + encodeURIComponent(firstFormData.phone || '');
-            url += '&אימייל=' + encodeURIComponent(email);
-            url += '&זמן%20שיחה%20מועדף=' + encodeURIComponent(callTime);
-            url += '&סוג%20עסק=' + encodeURIComponent(businessType);
-            
-            if (businessType === 'אחר' && otherBusiness.value) {
-                url += '&פירוט%20עסק%20אחר=' + encodeURIComponent(otherBusiness.value);
-            }
-            
-            url += '&סוג%20טופס=' + encodeURIComponent('טופס הרשמה מלא');
-            url += '&הסכמה=' + encodeURIComponent(firstFormData.consent || 'כן');
-            
-            iframe.src = url;
-            document.body.appendChild(iframe);
-            
-            // Continue to next page after a short delay
-            setTimeout(() => {
-                document.body.removeChild(iframe);
-                document.getElementById('loading2').style.display = 'none';
-                document.getElementById('page2Button').disabled = false;
-                
-                hideAllPages();
-                document.getElementById('page3').classList.add('active');
-                updateProgressIndicator(3);
-            }, 2000);
-        }
-        
-        function hideAllPages() {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-        }
-        
-        function updateProgressIndicator(step) {
-            document.querySelectorAll('.step').forEach((stepElement, index) => {
-                if (index + 1 === step) {
-                    stepElement.className = 'step active';
-                } else {
-                    stepElement.className = 'step inactive';
-                }
-            });
-        }
-        
-        // Show "Other" field if "Other" is selected
-        document.getElementById('businessType').addEventListener('change', function() {
-            const otherContainer = document.getElementById('otherBusinessContainer');
-            const otherBusinessInput = document.getElementById('otherBusiness');
-            
-            if (this.value === 'אחר') {
-                otherContainer.style.display = 'block';
-                otherBusinessInput.setAttribute('required', '');
-            } else {
-                otherContainer.style.display = 'none';
-                otherBusinessInput.removeAttribute('required');
-            }
-        });
-    </script>
-</body>
-</html>
+            document.getElementById('loading1').style.display = 'block';
