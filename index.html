@@ -236,7 +236,7 @@
     <!-- Page 2: Simplified Registration Form -->
     <div id="page2" class="page form-container">
         <button type="button" class="back-button" onclick="goToFirstPage()">
-            &larr; חזרה לשלב הקודם
+            &larר; חזרה לשלב הקודם
         </button>
         
         <h1>טופס רישום לשיחת התאמה להטמעה של אוטומציות AI לעסק שלך</h1>
@@ -300,28 +300,45 @@
         // Store the first form data
         let firstFormData = {};
         
-        // Submission function with fetch
-        function submitWithFetch(params) {
-            // Create FormData
-            const formData = new FormData();
+        // Submission function using XMLHttpRequest
+        function submitToSheet(params, loadingElementId, nextPageId) {
+            // Show loading indicator
+            const loadingElement = document.getElementById(loadingElementId);
+            loadingElement.style.display = 'block';
+            
+            // Create URLSearchParams for proper encoding
+            const formParams = new URLSearchParams();
+            
+            // Add all parameters
             Object.keys(params).forEach(key => {
-                formData.append(key, params[key]);
+                formParams.append(key, params[key]);
             });
-
-            // Use fetch with mode: 'no-cors'
-            return fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: formData,
-                mode: 'no-cors'  // Important for cross-origin requests
-            })
-            .then(response => {
-                console.log('Form submission attempted');
-                return response;
-            })
-            .catch(error => {
-                console.error('Submission error:', error);
-                alert('שגיאה בשליחת הטופס. אנא נסה שוב.');
-            });
+            
+            // Add timestamp
+            formParams.append('חותמת זמן', new Date().toISOString());
+            
+            // Use XMLHttpRequest for submission
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', SCRIPT_URL, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            
+            xhr.onload = function() {
+                loadingElement.style.display = 'none';
+                console.log('Response received:', xhr.responseText);
+                
+                // Move to next page
+                hideAllPages();
+                document.getElementById(nextPageId).classList.add('active');
+                updateProgressIndicator(nextPageId === 'page2' ? 2 : 3);
+            };
+            
+            xhr.onerror = function() {
+                loadingElement.style.display = 'none';
+                console.error('Submission error');
+                alert('שגיאה בשליחה. אנא נסה שוב.');
+            };
+            
+            xhr.send(formParams);
         }
         
         // Simplified navigation functions
@@ -341,8 +358,7 @@
                 alert('נא למלא את כל השדות המסומנים ב-* ולאשר את תנאי השימוש');
                 return;
             }
-            
-            // Validate phone number has exactly 10 digits
+      // Validate phone number has exactly 10 digits
             if (!/^\d{10}$/.test(phone)) {
                 alert('מספר הטלפון חייב להכיל בדיוק 10 ספרות');
                 return;
@@ -363,5 +379,83 @@
                 'סוג טופס': 'טופס ווצאפ'
             };
             
-            // Show loading indicator
-            document.getElementById('loading1').style.display = 'block';
+            // Submit to sheet
+            submitToSheet(params, 'loading1', 'page2');
+        }
+        
+        function submitFinalForm() {
+            // Validate second page
+            const email = document.getElementById('email').value;
+            const callTime = document.getElementById('callTime').value;
+            const businessType = document.getElementById('businessType').value;
+            const otherBusiness = document.getElementById('otherBusiness');
+            
+            if (!email || !callTime || !businessType) {
+                alert('נא למלא את כל השדות המסומנים ב-*');
+                return;
+            }
+            
+            // Validate email format
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                alert('נא להזין כתובת אימייל תקינה');
+                return;
+            }
+            
+            if (businessType === 'אחר' && !otherBusiness.value) {
+                alert('נא לפרט את סוג העסק שלך');
+                return;
+            }
+            
+            // Prepare submission params
+            const params = {
+                'שם': firstFormData.name || '',
+                'מספר פלאפון': firstFormData.phone || '',
+                'אימייל': email,
+                'זמן שיחה מועדף': callTime,
+                'סוג עסק': businessType,
+                'סוג טופס': 'טופס הרשמה מלא',
+                'הסכמה': firstFormData.consent || 'כן'
+            };
+            
+            // Add other business details if applicable
+            if (businessType === 'אחר' && otherBusiness.value) {
+                params['פירוט עסק אחר'] = otherBusiness.value;
+            }
+            
+            // Submit to sheet
+            submitToSheet(params, 'loading2', 'page3');
+        }
+        
+        function hideAllPages() {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+        }
+        
+        function updateProgressIndicator(step) {
+            document.querySelectorAll('.step').forEach((stepElement, index) => {
+                if (index + 1 === step) {
+                    stepElement.className = 'step active';
+                } else {
+                    stepElement.className = 'step inactive';
+                }
+            });
+        }
+        
+        // Show "Other" field if "Other" is selected
+        document.getElementById('businessType').addEventListener('change', function() {
+            const otherContainer = document.getElementById('otherBusinessContainer');
+            const otherBusinessInput = document.getElementById('otherBusiness');
+            
+            if (this.value === 'אחר') {
+                otherContainer.style.display = 'block';
+                otherBusinessInput.setAttribute('required', '');
+            } else {
+                otherContainer.style.display = 'none';
+                otherBusinessInput.removeAttribute('required');
+            }
+        });
+    </script>
+</body>
+</html>
