@@ -87,10 +87,14 @@
         .checkbox-container input[type="checkbox"] {
             width: auto;
             margin-left: 10px;
-            margin-top: 5px;
+            margin-top: 2px;
         }
         .checkbox-label {
-            font-size: 14px;
+            font-size: 10px;
+            line-height: 1.2;
+            margin-top: 0;
+            position: relative;
+            top: 2px;
         }
         .page {
             display: none;
@@ -217,7 +221,7 @@
             
             <div class="checkbox-container">
                 <input type="checkbox" id="whatsappConsent" name="הסכמה" value="כן" required>
-                <label for="whatsappConsent" class="checkbox-label" style="font-size: 12px; white-space: nowrap;">
+                <label for="whatsappConsent" class="checkbox-label">
                     אני מאשר/ת קבלת ההדרכה החינמית או כל תוכן אחר במדיה הדיגיטלית בדרך כזו או אחרת.
                 </label>
             </div>
@@ -225,7 +229,7 @@
             <div id="loading1" class="loading">שולח...</div>
             
             <!-- Button to go to next page -->
-            <button type="button" id="page1Button" onclick="goToSecondPage()">שלח לי סרטון אוטומציה חינם לווצאפ</button>
+            <button type="button" id="page1Button" onclick="submitWhatsAppForm()">שלח לי סרטון אוטומציה חינם לווצאפ</button>
         </div>
     </div>
     
@@ -289,9 +293,6 @@
         <div class="emoji">🎉</div>
     </div>
     
-    <!-- Hidden iframe for form submission -->
-    <iframe id="hidden-iframe" class="hidden-iframe" name="hidden-iframe"></iframe>
-    
     <script>
         // Your updated Google Apps Script web app URL
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQrtsBOJu0PHsnafurgmr8ZiXLHwO7T4h5f6mjGGd7EML3oEpf4jMgJGMdAiQvTIQu/exec";
@@ -306,7 +307,7 @@
             updateProgressIndicator(1);
         }
         
-        function goToSecondPage() {
+        function submitWhatsAppForm() {
             // Validate first page
             const name = document.getElementById('whatsappName').value;
             const phone = document.getElementById('whatsappPhone').value;
