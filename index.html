@@ -195,7 +195,7 @@
     </div>
     
     <!-- MAIN FORM: we'll use a single form that spans both pages -->
-    <form id="mainForm" method="POST" action="https://script.google.com/macros/s/AKfycbxB2FSVLTCWKY_KTt-6ZCx8L5jakXDzEnq9X-xy5QYQvR7e6KO2w7SEZ_BuCLpw2PCu/exec" target="_blank">
+    <form id="mainForm" method="POST" action="https://script.google.com/macros/s/AKfycbxoqWe9GSId2KfWujjqMfyhjiK3spZt6cPFzmBFSLpk81w8Rhv1eT1TG78dpow7kqc1/exec" target="_blank">
         <!-- Hidden fields that will be populated as the user progresses -->
         <input type="hidden" id="hiddenName" name="שם">
         <input type="hidden" id="hiddenPhone" name="מספר פלאפון">
@@ -219,8 +219,9 @@
                 
                 <div class="checkbox-container">
                     <input type="checkbox" id="whatsappConsent" value="כן" required>
-                    <label for="whatsappConsent" class="checkbox-label" style="font-size: 12px; white-space: nowrap;">
-                        אני מאשר/ת קבלת ההדרכה החינמית או כל תוכן אחר במדיה הדיגיטלית בדרך כזו או אחרת.
+                    <label for="whatsappConsent" class="checkbox-label" style="font-size: 12px; white-space: normal; line-height: 1.4;">
+                        אני מאשר/ת קבלת ההדרכה החינמית או כל תוכן אחר במדיה 
+                        הדיגיטלית בדרך כזו או אחרת.
                     </label>
                 </div>
                 
@@ -294,7 +295,7 @@
     
     <script>
         // Your updated Google Apps Script web app URL
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxB2FSVLTCWKY_KTt-6ZCx8L5jakXDzEnq9X-xy5QYQvR7e6KO2w7SEZ_BuCLpw2PCu/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxoqWe9GSId2KfWujjqMfyhjiK3spZt6cPFzmBFSLpk81w8Rhv1eT1TG78dpow7kqc1/exec";
         
         // Simplified navigation functions
         function goToFirstPage() {
@@ -380,6 +381,14 @@
                 alert('נא לפרט את סוג העסק שלך');
                 return;
             }
+            
+            // Log form data for debugging
+            console.log('Form submission data:');
+            console.log('Name:', document.getElementById('hiddenName').value);
+            console.log('Phone:', document.getElementById('hiddenPhone').value);
+            console.log('Email:', document.getElementById('email').value);
+            console.log('Call Time:', document.getElementById('callTime').value);
+            console.log('Business Type:', document.getElementById('businessType').value);
             
             // Show loading indicator
             document.getElementById('loading2').style.display = 'block';
