@@ -194,15 +194,8 @@
         </div>
     </div>
     
-    <!-- MAIN FORM: we'll use a single form that spans both pages -->
-    <form id="mainForm" method="POST" action="https://script.google.com/macros/s/AKfycbwZi5BRUdjoPSIfEH32UuH4EiWB8jX4cuOEqK2Pk-2w9ld7x0qHquucOxfC2C9z7PT5/exec" target="_blank">
-        <!-- Hidden fields that will be populated as the user progresses -->
-        <input type="hidden" id="hiddenName" name="שם">
-        <input type="hidden" id="hiddenPhone" name="מספר פלאפון">
-        <input type="hidden" id="hiddenConsent" name="הסכמה">
-        <input type="hidden" id="hiddenFormType" name="סוג טופס" value="טופס הרשמה מלא">
-        <input type="hidden" id="hiddenTimestamp" name="תאריך הגשה">
-        
+    <!-- MAIN FORM -->
+    <form id="mainForm">
         <!-- Page 1: Phone and Name for WhatsApp Video -->
         <div id="page1" class="page active form-container">
             <h1>קבל אוטומציה חינם לעסק לווצאפ</h1>
@@ -242,12 +235,12 @@
             <div id="applicationForm">
                 <div class="form-group">
                     <label for="email">כתובת אימייל <span class="required">*</span></label>
-                    <input type="email" id="email" name="אימייל" required>
+                    <input type="email" id="email" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="callTime">מהו הזמן המועדף לשיחה? <span class="required">*</span></label>
-                    <select id="callTime" name="זמן שיחה מועדף" required>
+                    <select id="callTime" required>
                         <option value="" disabled selected>בחר את הזמן המועדף</option>
                         <option value="בוקר">בוקר (9:00-13:00)</option>
                         <option value="אחר הצהריים">אחר הצהריים (13:00-17:00)</option>
@@ -257,7 +250,7 @@
                 
                 <div class="form-group">
                     <label for="businessType">איזה סוג עסק יש לך? <span class="required">*</span></label>
-                    <select id="businessType" name="סוג עסק" required>
+                    <select id="businessType" required>
                         <option value="" disabled selected>בחר את סוג העסק שלך</option>
                         <option value="קמעונאות">קמעונאות</option>
                         <option value="מבוסס שירות">מבוסס שירות</option>
@@ -274,13 +267,13 @@
                 
                 <div class="form-group" id="otherBusinessContainer" style="display: none;">
                     <label for="otherBusiness">נא לפרט את סוג העסק שלך <span class="required">*</span></label>
-                    <input type="text" id="otherBusiness" name="פירוט עסק אחר">
+                    <input type="text" id="otherBusiness">
                 </div>
                 
                 <div id="loading2" class="loading">שולח...</div>
                 
                 <!-- Submit button for page 2 form -->
-                <button type="submit" id="page2Button">שלח</button>
+                <button type="button" id="page2Button" onclick="submitForm()">שלח</button>
             </div>
         </div>
     </form>
@@ -294,8 +287,20 @@
     </div>
     
     <script>
-        // Your updated Google Apps Script web app URL
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwZi5BRUdjoPSIfEH32UuH4EiWB8jX4cuOEqK2Pk-2w9ld7x0qHquucOxfC2C9z7PT5/exec";
+        // Your Google Apps Script URL
+        const API_URL = "https://script.google.com/macros/s/AKfycbyg_BK27Mqd-UC67S1cI_tYw6TTAQJOXreKtwcbpuaIlrvcvpUEEr1_juEj8aJ8y-BU9w/exec";
+        
+        // Store form data
+        let formData = {
+            name: "",
+            phone: "",
+            email: "",
+            callTime: "",
+            businessType: "",
+            otherBusinessDetails: "",
+            formType: "טופס הרשמה מלא",
+            consent: false
+        };
         
         // Simplified navigation functions
         function goToFirstPage() {
@@ -321,23 +326,10 @@
                 return;
             }
             
-            // Format the timestamp in Israeli format
-            const now = new Date();
-            const timestamp = now.toLocaleString('he-IL', {
-                timeZone: 'Asia/Jerusalem',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            
-            // Store data in hidden fields
-            document.getElementById('hiddenName').value = name;
-            document.getElementById('hiddenPhone').value = phone;
-            document.getElementById('hiddenConsent').value = consent ? 'כן' : 'לא';
-            document.getElementById('hiddenTimestamp').value = timestamp;
+            // Store data
+            formData.name = name;
+            formData.phone = phone;
+            formData.consent = consent ? "כן" : "לא";
             
             // Show loading indicator
             document.getElementById('loading1').style.display = 'block';
@@ -354,16 +346,14 @@
             }, 1000);
         }
         
-        // Add a listener to the main form to handle submission
-        document.getElementById('mainForm').addEventListener('submit', function(e) {
+        function submitForm() {
             // Validate second page
             const email = document.getElementById('email').value;
             const callTime = document.getElementById('callTime').value;
             const businessType = document.getElementById('businessType').value;
-            const otherBusiness = document.getElementById('otherBusiness');
+            const otherBusiness = document.getElementById('otherBusiness').value;
             
             if (!email || !callTime || !businessType) {
-                e.preventDefault();
                 alert('נא למלא את כל השדות המסומנים ב-*');
                 return;
             }
@@ -371,38 +361,73 @@
             // Validate email format
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailPattern.test(email)) {
-                e.preventDefault();
                 alert('נא להזין כתובת אימייל תקינה');
                 return;
             }
             
-            if (businessType === 'אחר' && !otherBusiness.value) {
-                e.preventDefault();
+            if (businessType === 'אחר' && !otherBusiness) {
                 alert('נא לפרט את סוג העסק שלך');
                 return;
             }
             
-            // Log form data for debugging
-            console.log('Form submission data:');
-            console.log('Name:', document.getElementById('hiddenName').value);
-            console.log('Phone:', document.getElementById('hiddenPhone').value);
-            console.log('Email:', document.getElementById('email').value);
-            console.log('Call Time:', document.getElementById('callTime').value);
-            console.log('Business Type:', document.getElementById('businessType').value);
+            // Update form data
+            formData.email = email;
+            formData.callTime = callTime;
+            formData.businessType = businessType;
+            if (businessType === 'אחר') {
+                formData.otherBusinessDetails = otherBusiness;
+            }
             
             // Show loading indicator
             document.getElementById('loading2').style.display = 'block';
             document.getElementById('page2Button').disabled = true;
             
-            // Form will submit normally
+            // Send data to server
+            sendFormData();
+        }
+        
+        function sendFormData() {
+            // Format data for Google Apps Script
+            const formattedData = {
+                שם: formData.name,
+                "מספר פלאפון": formData.phone,
+                אימייל: formData.email,
+                "זמן שיחה מועדף": formData.callTime,
+                "סוג עסק": formData.businessType === 'אחר' ? 
+                    formData.businessType + ': ' + formData.otherBusinessDetails : 
+                    formData.businessType,
+                "סוג טופס": formData.formType,
+                הסכמה: formData.consent,
+                "תאריך הגשה": new Date().toLocaleString('he-IL', {
+                    timeZone: 'Asia/Jerusalem'
+                })
+            };
             
-            // Show the thank you page after a delay
-            setTimeout(() => {
+            // Send to Google Apps Script
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formattedData),
+                redirect: 'follow',
+                mode: 'no-cors' // Important for cross-origin requests to Google Apps Script
+            })
+            .then(response => {
+                console.log('Form submitted successfully');
+                
+                // Show the thank you page after submission
                 hideAllPages();
                 document.getElementById('page3').classList.add('active');
                 updateProgressIndicator(3);
-            }, 1000);
-        });
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+                alert('אירעה שגיאה בשליחת הטופס. נסה שנית מאוחר יותר.');
+                document.getElementById('loading2').style.display = 'none';
+                document.getElementById('page2Button').disabled = false;
+            });
+        }
         
         function hideAllPages() {
             document.querySelectorAll('.page').forEach(page => {
