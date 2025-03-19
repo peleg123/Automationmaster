@@ -2,8 +2,8 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>טופס רישום לאוטומציות AI לעסק</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Octo Auto - טופס רישום לאוטומציות AI לעסק</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap');
         
@@ -13,22 +13,62 @@
             color: #37474F;
             max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
             background-color: #ECEFF1;
             text-align: right;
+            touch-action: manipulation;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+                max-width: 100%;
+            }
+            
+            .headline {
+                padding: 12px;
+                font-size: 1.2em;
+            }
+            
+            .logo-image {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .company-name {
+                font-size: 24px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .form-container {
+                padding: 15px;
+            }
+            
+            input, select, textarea, button {
+                font-size: 16px;
+                padding: 12px;
+            }
+            
+            .final-page .logo-image {
+                width: 150px;
+                height: 150px;
+            }
         }
         h1 {
             text-align: center;
             margin-bottom: 30px;
-            color: #006064;
+            color: #6a399f;
         }
         .headline {
             text-align: center;
             margin-bottom: 25px;
-            color: #006064;
+            color: #6a399f;
             font-size: 1.4em;
             font-weight: bold;
-            background-color: #B2DFDB;
+            background-color: #e8e1f4;
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -40,12 +80,12 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            color: #006064;
+            color: #6a399f;
         }
         input, select, textarea {
             width: 100%;
             padding: 10px;
-            border: 1px solid #B2DFDB;
+            border: 1px solid #d2c4e7;
             border-radius: 4px;
             font-size: 16px;
             background-color: white;
@@ -53,11 +93,11 @@
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #00897B;
-            box-shadow: 0 0 0 3px rgba(0, 137, 123, 0.2);
+            border-color: #6a399f;
+            box-shadow: 0 0 0 3px rgba(106, 57, 159, 0.2);
         }
         button {
-            background-color: #00897B;
+            background-color: #6a399f;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -68,16 +108,21 @@
             transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #006064;
+            background-color: #5a2d8a;
         }
         .form-container {
             background-color: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        
+        /* Fix for iOS zooming on input fields */
+        input, select, textarea {
+            font-size: 16px;
+        }
         .required {
-            color: #00897B;
+            color: #6a399f;
         }
         .checkbox-container {
             display: flex;
@@ -123,17 +168,17 @@
             transition: all 0.3s ease;
         }
         .step.active {
-            background-color: #00897B;
+            background-color: #6a399f;
             color: white;
         }
         .step.inactive {
-            background-color: #B2DFDB;
-            color: #006064;
+            background-color: #e8e1f4;
+            color: #6a399f;
         }
         .step-connector {
             height: 2px;
             width: 30px;
-            background-color: #B2DFDB;
+            background-color: #e8e1f4;
         }
         .back-button {
             background-color: #37474F;
@@ -147,7 +192,7 @@
             padding: 40px 20px;
         }
         .final-page h2 {
-            color: #006064;
+            color: #6a399f;
             margin-bottom: 20px;
         }
         .final-page p {
@@ -168,11 +213,35 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid #00897B;
+            border: 3px solid #6a399f;
             border-radius: 50%;
             border-top-color: transparent;
             animation: spin 1s linear infinite;
             margin-right: 10px;
+        }
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo-image {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+        .company-name {
+            font-size: 28px;
+            color: #6a399f;
+            font-weight: bold;
+        }
+        .final-page .logo-image {
+            width: 200px;
+            height: 200px;
+        }
+        .final-page .company-name {
+            font-size: 32px;
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
@@ -181,6 +250,10 @@
 </head>
 <body>
     <div class="headline">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/r74TTWv/octo-auto-logo.png" alt="Octo Auto Logo" class="logo-image">
+            <span class="company-name">Octo Auto</span>
+        </div>
         מלא את הטופס וחסוך לעצמך שעות של זמן מבוזבז בעזרתנו!
     </div>
     
@@ -198,6 +271,10 @@
     <form id="mainForm">
         <!-- Page 1: Phone and Name for WhatsApp Video -->
         <div id="page1" class="page active form-container">
+            <div class="logo-container">
+                <img src="https://i.ibb.co/r74TTWv/octo-auto-logo.png" alt="Octo Auto Logo" class="logo-image">
+                <span class="company-name">Octo Auto</span>
+            </div>
             <h1>קבל אוטומציה חינם לעסק לווצאפ</h1>
             <div id="whatsappForm">
                 <div class="form-group">
@@ -231,6 +308,10 @@
                 &larr; חזרה לשלב הקודם
             </button>
             
+            <div class="logo-container">
+                <img src="https://i.ibb.co/r74TTWv/octo-auto-logo.png" alt="Octo Auto Logo" class="logo-image">
+                <span class="company-name">Octo Auto</span>
+            </div>
             <h1>טופס רישום לשיחת התאמה להטמעה של אוטומציות AI לעסק שלך</h1>
             <div id="applicationForm">
                 <div class="form-group">
@@ -280,6 +361,10 @@
     
     <!-- Page 3: Final confirmation -->
     <div id="page3" class="page form-container final-page">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/r74TTWv/octo-auto-logo.png" alt="Octo Auto Logo" class="logo-image">
+            <span class="company-name">Octo Auto</span>
+        </div>
         <div class="emoji">✨</div>
         <h2>מעולה!</h2>
         <p>ההדרכה נשלחה אליך ובקרוב נעלה לשיחה, מתרגשים :)</p>
@@ -376,6 +461,11 @@
             formData.businessType = businessType;
             if (businessType === 'אחר') {
                 formData.otherBusinessDetails = otherBusiness;
+            }
+            
+            // Remove leading zero from phone number
+            if (formData.phone.startsWith('0')) {
+                formData.phone = formData.phone.substring(1);
             }
             
             // Show loading indicator
